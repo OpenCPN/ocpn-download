@@ -1,7 +1,6 @@
 import React from 'react';
 import { Card, Button, Form} from 'react-bootstrap';
 
-import down from './triangle-down.png';
 import right from './triangle-right.png';
 
 import './App.css';
@@ -147,19 +146,17 @@ class CurrCatalogComp extends React.Component {
   onExpand(event) {this.props.showSelectedCatalog(true)}
 
   render() {
-    this.details = (
-      <div className="details">
-        <img src={right}
-          className={this.state.details ? 'arrow-down' : 'arrow-right'}
-          alt={this.state.details ? 'collapse' : 'expand'}
-          onClick={(e) => {this.setState({details: !this.state.details})}} />
-      </div>
-    );
     const showCatalogs = this.props.showCatalogs;
     return (
       <div>
         <div className="current-catalog">
-          {this.details} &nbsp; Current catalog: {this.props.selectedCatalog}
+          <div className="details">
+            <img src={right}
+              className={this.state.details ? 'arrow-down' : 'arrow-right'}
+              alt={this.state.details ? 'collapse' : 'expand'}
+              onClick={(e) => {this.setState({details: !this.state.details})}} />
+          </div>
+          &nbsp; Current catalog: {this.props.selectedCatalog}
         </div>
         <div className="details-info"
           style={{display: this.state.details ? 'inline' : 'none'}} >
@@ -341,8 +338,8 @@ class VersionSelect extends React.Component {
       this.props.setVersion(this.props.versions[0]);
       this.platformChangeCount = this.props.platformChangeCount
     }
-    let options = [];
-    let versions = this.props.versions;
+    var options = [];
+    var versions = this.props.versions;
     if (versions.length >= 2) {
       options.push(
         <option key={255} value={''}> Select a version </option>)
@@ -458,7 +455,7 @@ class App extends React.Component {
     if (plugin !== '') {
       platforms = JSON.stringify(this.state.catalog.getPlatforms(plugin))
     }
-    var versions = '[]'
+    var versions = []
     if (this.state.platform) {
       versions =
         this.state.catalog.getPluginVersions(plugin, this.state.platform)
