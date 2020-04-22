@@ -147,38 +147,25 @@ class CurrCatalogComp extends React.Component {
   onExpand(event) {this.props.showSelectedCatalog(true)}
 
   render() {
-    if (this.state.details) {
-      this.vers_date = (
-        <div className="details-info">
-          <div> Version: {this.props.version} </div>
-          <div> Last update: {this.props.date} </div>
-        </div>
-      )
-      this.details = (
-        <div className="details">
-          <img src={right} className="arrow-down" alt="collapse"
-            onClick={(e) => {this.setState({details: false})}} />
-          &nbsp;
-        </div>
-      );
-    }
-    else {
-      this.vers_date = (<div/>)
-      this.details = (
-        <div className="details">
-          <img src={right} className="arrow-right" alt="expand"
-            onClick={(e) => {this.setState({details: true})}} />
-          &nbsp;
-        </div>
-      );
-    }
+    this.details = (
+      <div className="details">
+        <img src={right}
+          className={this.state.details ? 'arrow-down' : 'arrow-right'}
+          alt={this.state.details ? 'collapse' : 'expand'}
+          onClick={(e) => {this.setState({details: !this.state.details})}} />
+      </div>
+    );
     const showCatalogs = this.props.showCatalogs;
     return (
       <div>
         <div className="current-catalog">
-          {this.details} Current catalog: {this.props.selectedCatalog}
+          {this.details} &nbsp; Current catalog: {this.props.selectedCatalog}
         </div>
-        {this.vers_date} <br/>
+        <div className="details-info"
+          style={{display: this.state.details ? 'inline' : 'none'}} >
+          <div> Version: {this.props.version} </div>
+          <div> Last update: {this.props.date} </div>
+        </div>
         <img src={right}
           className={showCatalogs ? 'arrow-down' : 'arrow-right'}
           alt={showCatalogs ? 'collapse' : 'expand'}
