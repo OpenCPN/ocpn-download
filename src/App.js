@@ -295,6 +295,18 @@ class PlatformSelect extends React.Component {
     this.props.setPlatform(event.target.value);
   }
 
+  getLabel(key) {
+    if (key.startsWith('msvc')) {
+      return 'Windows-10';
+    }
+    else if (key.startsWith('darwin')) {
+      return key.replace('darwin', 'MacOS');
+    }
+    else {
+      return key;
+    }
+  }
+
   render() {
     let options = [];
     let platforms = JSON.parse(this.props.platforms);
@@ -304,7 +316,9 @@ class PlatformSelect extends React.Component {
     }
     for (let i = 0; i < platforms.length; i += 1) {
       options.push(
-        <option key={i} value={platforms[i]}> {platforms[i]} </option>)
+        <option key={i} value={platforms[i]}>
+          {this.getLabel(platforms[i])}
+        </option>)
     }
     return (
       <Form.Group controlId="platformSelect" onChange={this.onChange}>
