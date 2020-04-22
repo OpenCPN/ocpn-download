@@ -73,22 +73,7 @@ class Catalog {
     if (Object.keys(this.data).indexOf(plugin) === -1 ) {
       return [];
     }
-    var platforms = Object.keys(this.data[plugin].platforms);
-    platforms = platforms.map(p => {
-      return p;
-/***
-      if (p.startsWith('darwin')) {
-        //return 'MacOS-' + p.split('-', 1)[1];
-      }
-      else if (p.startsWith('msvc')) {
-        //return 'Windows-10';
-      }
-      else {
-        return p;
-      }
-**/
-    });
-    return platforms;
+    return Object.keys(this.data[plugin].platforms);
   }
 
   // Get list of versions available for given plugin and platform.
