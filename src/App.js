@@ -29,7 +29,7 @@ class Catalog {
   }
 
   parse(label, url, onLoaded, onError){
-    const api = API_url.replace('master', url);
+    const api = API_url.replace('master', encodeURIComponent(url));
     fetch(api)
       .then(res => res.json())
       .then(res => {
