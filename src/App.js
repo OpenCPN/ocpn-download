@@ -283,7 +283,7 @@ class PlatformSelect extends React.Component {
       return 'Windows';
     }
     else if (key.startsWith('darwin')) {
-      return key.replace('darwin', 'MacOS');
+      return 'MacOS';
     }
     else {
       return key;
