@@ -64,8 +64,6 @@ class Catalog {
 
   // Return list of platforms (builds) for given plugin. The
   // platform names are "target OS-target OS version" tuples.
-  //   - 'darwin' is represented as 'MacOS',
-  //   - msvc builds as 'Windows-10'
   getPlatforms(plugin) {
     if (!this.data) {
       return [];
@@ -282,7 +280,7 @@ class PlatformSelect extends React.Component {
 
   getLabel(key) {
     if (key.startsWith('msvc')) {
-      return 'Windows-10';
+      return 'Windows';
     }
     else if (key.startsWith('darwin')) {
       return key.replace('darwin', 'MacOS');
