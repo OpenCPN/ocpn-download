@@ -39,3 +39,11 @@
   flex-direction: column;
   text-indent: 5%
 }
+
+.copyright {
+  position: absolute;
+  bottom: 0;
+}
+#container {
+   position: relative;
+}

@@ -526,6 +526,7 @@ class App extends React.Component {
             </Card>
           </div>
         </div>
+        <div classname="copyright"> copyright </div>
       </div>
     );
   }
