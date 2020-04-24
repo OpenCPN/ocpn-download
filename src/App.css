@@ -8,10 +8,6 @@
 }
 
 
-.arrows {
-  height: 0.8em;
-}
-
 .arrow-down {
   height: 0.8em;
   transform: rotate(90deg);
@@ -31,6 +27,7 @@
 .ocpn-card {
   width: 36rem  
 }
+
 .current-catalog {
   display: flex;
   flex-direction: row;

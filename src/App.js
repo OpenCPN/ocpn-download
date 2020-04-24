@@ -1,3 +1,6 @@
+//https://www.gnu.org/software/librejs/free-your-javascript.html
+//
+//https://github.com/react-bootstrap/react-bootstrap/blob/master/LICENSE
 import React from 'react';
 import { Card, Button, Form} from 'react-bootstrap';
 
@@ -412,9 +415,6 @@ class App extends React.Component {
       'plugins': plugins,
       'loading': false
     });
-    if (!this.catalog) {
-      return;
-    }
   }
 
   loadError(label, url) {
@@ -431,7 +431,6 @@ class App extends React.Component {
   }
 
   setPlatform(platform) {
-
     this.setState({
       'platform': platform,
       'version': '',
