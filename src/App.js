@@ -268,7 +268,7 @@ class PlatformSelect extends React.Component {
     super(props, context);
     this.platforms = [];
     if (props.platforms) {
-      this.platforms = JSON.parse(props.platforms);
+      this.platforms = props.platforms;
     }
     this.onChange = this.onChange.bind(this);
   }
@@ -292,15 +292,14 @@ class PlatformSelect extends React.Component {
 
   render() {
     let options = [];
-    let platforms = JSON.parse(this.props.platforms);
-    if (platforms.length > 0) {
+    if (this.props.platforms.length > 0) {
       options.push(
         <option key="255" value={''}> Select a platform </option>)
     }
-    for (let i = 0; i < platforms.length; i += 1) {
+    for (let i = 0; i < this.props.platforms.length; i += 1) {
       options.push(
-        <option key={i} value={platforms[i]}>
-          {this.getLabel(platforms[i])}
+        <option key={i} value={this.props.platforms[i]}>
+          {this.getLabel(this.props.platforms[i])}
         </option>)
     }
     return (
@@ -448,10 +447,8 @@ class App extends React.Component {
 
   render() {
     const plugin = this.state.plugin;
-    var platforms = '[]';
-    if (plugin !== '') {
-      platforms = JSON.stringify(this.state.catalog.getPlatforms(plugin))
-    }
+    const platforms =
+      plugin !== '' ? this.state.catalog.getPlatforms(plugin) : [];
     var versions = []
     if (this.state.platform) {
       versions =
