@@ -32,7 +32,7 @@
 import React from 'react';
 import { Card, Button, Form} from 'react-bootstrap';
 
-import right from './triangle-right.png';
+import arrow from './triangle-right.png';
 
 import './App.css';
 
@@ -157,7 +157,7 @@ class Copyright extends React.Component {
   render() {
     return (
       <div className="footer">
-        <img src={right}
+        <img src={arrow}
           className={this.state.expanded ? 'arrow-down' : 'arrow-right'}
           alt={this.state.expanded ? 'collapse' : 'expand'}
           onClick={(e) => {this.setState({expanded: !this.state.expanded})}}
@@ -183,7 +183,7 @@ The license is available
 }
 
 
-class CurrCatalogComp extends React.Component {
+class CurrentCatalog extends React.Component {
   // Current catalog (at top) + optional details.
 
   constructor(props, context) {
@@ -202,7 +202,7 @@ class CurrCatalogComp extends React.Component {
       <div>
         <div className="current-catalog">
           <div className="details">
-            <img src={right}
+            <img src={arrow}
               className={this.state.details ? 'arrow-down' : 'arrow-right'}
               alt={this.state.details ? 'collapse' : 'expand'}
               onClick={(e) => {this.setState({details: !this.state.details})}} />
@@ -214,7 +214,7 @@ class CurrCatalogComp extends React.Component {
           <div> Version: {this.props.version} </div>
           <div> Last update: {this.props.date} </div>
         </div>
-        <img src={right}
+        <img src={arrow}
           className={showCatalogs ? 'arrow-down' : 'arrow-right'}
           alt={showCatalogs ? 'collapse' : 'expand'}
           onClick={showCatalogs ? this.onCollapse : this.onExpand} />
@@ -256,7 +256,7 @@ class CatalogSelect extends React.Component {
     const Custom = <div>{warning} Custom URL</div>;
     return (
       <div>
-        <CurrCatalogComp
+        <CurrentCatalog
           version={this.props.version}
           date={this.props.date}
           showCatalogs={this.state.showCatalogs}
