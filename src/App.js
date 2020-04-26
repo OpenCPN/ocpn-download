@@ -376,7 +376,7 @@ class PlatformSelect extends React.Component {
     return (
       <Form.Group controlId="platformSelect" onChange={this.onChange}>
         <Form.Label>Platform</Form.Label>
-        <Form.Control as="select" value={this.props.platform}>
+        <Form.Control as="select" value={this.props.platform} disabled={options.length < 1}>
           {options}
         </Form.Control>
       </Form.Group>
@@ -419,8 +419,9 @@ class VersionSelect extends React.Component {
     return (
       <Form.Group controlId="versionSelect" onChange={this.onChange}>
         <Form.Label>Version</Form.Label>
-        <Form.Control as="select" value={this.props.version}>
-          {options}
+        <Form.Control as="select" value={this.props.version}
+          disabled={versions.length < 2}>
+            {options}
         </Form.Control>
       </Form.Group>
     );
