@@ -7,6 +7,18 @@
   font-size: calc(10px + 2vmin);
 }
 
+.app {
+  position: relative;
+  height: 100vh;
+  text-align: center;
+}
+.container {
+   position: relative;
+   text-align: center;
+   text-align: left;
+   max-width: 30em;
+  height: 100vh;
+}
 
 .arrow-down {
   height: 0.8em;
@@ -25,7 +37,7 @@
 }
 
 .ocpn-card {
-  width: 36rem  
+  width: 36rem;
 }
 
 .current-catalog {
@@ -40,10 +52,16 @@
   text-indent: 5%
 }
 
-.copyright {
+.footer {
   position: absolute;
   bottom: 0;
+  width: 100%;
+  background-color: white;
+  margin-bottom: 1em;
 }
-#container {
-   position: relative;
+
+.license {
+  text-align: left;
+  margin-top: 1em;
+  margin-bottom: 1em;
 }

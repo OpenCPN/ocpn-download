@@ -140,6 +140,41 @@ class Catalog {
 
 }
 
+class Copyright extends React.Component {
+
+  constructor(props, context) {
+    super(props, context);
+    this.state = {'expanded': false };
+  }
+
+  render() {
+    return (
+      <div className="footer">
+        <img src={right}
+          className={this.state.expanded ? 'arrow-down' : 'arrow-right'}
+          alt={this.state.expanded ? 'collapse' : 'expand'}
+          onClick={(e) => {this.setState({expanded: !this.state.expanded})}}
+        />
+        &nbsp;    
+        Copyright and license
+        <div style={{display: this.state.expanded ? 'block' : 'none'}}
+          className="license">
+Copyright {'\u00a9'} Alec Leamas 2020
+<br/>
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 3 of the License, or
+(at your option) any later version
+<br/>
+The license is available 
+<a href="https://github.com/leamas/ocpn-download/blob/master/COPYING"> here </a>
+
+        </div>
+      </div>
+    );
+  }
+}
+
 
 class CurrCatalogComp extends React.Component {
 
@@ -481,12 +516,12 @@ class App extends React.Component {
         plugin, this.state.platform, this.state.version);
     }
     return (
-      <div className="App">
-        <div className="container">
+      <div className="app">
+        <div className="container" >
           <header className="app-header">
             <p> OpenCPN Plugin Downloader </p>
           </header>
-          <Card className="ocpn-card">
+          <Card>
             <Card.Body>
               <CatalogSelect
                 onCatalogChange={(label) => {this.loadCatalog(label)}}
@@ -500,7 +535,7 @@ class App extends React.Component {
             pointerEvents: this.state.loading ? 'none': 'auto',
             opacity: this.state.loading ? 0.4 : 1.0
             }} >
-            <Card className="ocpn-card">
+            <Card>
               <Card.Body>
                 <PluginSelect
                   plugin={this.state.plugin}
@@ -519,14 +554,14 @@ class App extends React.Component {
                 />
               </Card.Body>
             </Card>
-            <Card className="ocpn-card">
+            <Card>
               <Card.Body>
                 <DownloadPlugin url={url} disabled={url === ''}/>
               </Card.Body>
             </Card>
           </div>
+          <Copyright/>
         </div>
-        <div classname="copyright"> copyright </div>
       </div>
     );
   }
