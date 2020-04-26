@@ -1,7 +1,3 @@
-//https://www.gnu.org/software/librejs/free-your-javascript.html
-//
-//https://github.com/react-bootstrap/react-bootstrap/blob/master/LICENSE
-
 /*
  * ***************************************************************************
  *   Copyright (C) 2020 Alec Leamas                              *
@@ -21,8 +17,18 @@
  *   Free Software Foundation, Inc.,                                       *
  *   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,  USA.         *
  ***************************************************************************
-
 */
+
+/*
+ * Web support for downloading OpenCPN plugins.
+ *
+ * A single-page application which uses a backend API to parse the plugin
+ * catalog. User can select plugin, platform and version and eventually
+ * download the plugin.
+ *
+ * Some background: https://github.com/OpenCPN/OpenCPN/issues/1839
+ */
+
 import React from 'react';
 import { Card, Button, Form} from 'react-bootstrap';
 
@@ -30,10 +36,8 @@ import right from './triangle-right.png';
 
 import './App.css';
 
-const token =
-  '9138fef391ee4106c0e5c512f732dc51ea34a21487e1a731305e92b0073963f2';
 const API_base= 'https://squidd.io:443/apps/v1/api/ocpn_plugins/catalogs';
-const API_params = 'catalog=master&plugin=all&access_token=' + token;
+const API_params = 'catalog=@catalog@&plugin=all'
 const API_url = API_base + '?' + API_params;
 
 const urlBase = "https://raw.githubusercontent.com/OpenCPN/plugins";
@@ -44,17 +48,15 @@ const urlByName = {
   "Custom": ""
 }
 
-/*
- * The plugin database, reflecting the parsed ocpn-plugins.xml
- */
 class Catalog {
+  // The plugin database, reflecting the parsed ocpn-plugins.xml
 
   constructor() {
     this.parse = this.parse.bind(this);
   }
 
   parse(label, url, onLoaded, onError){
-    const api = API_url.replace('master', encodeURIComponent(url));
+    const api = API_url.replace('@catalog@', encodeURIComponent(url));
     fetch(api)
       .then(res => res.json())
       .then(res => {
@@ -74,8 +76,9 @@ class Catalog {
       })
   }
 
-  // Return list of available plugins
   getPlugins() {
+    // Return list of available plugins
+     
     if (!this.data) {
       return [];
     }
@@ -87,9 +90,10 @@ class Catalog {
     return keys;
   }
 
-  // Return list of platforms (builds) for given plugin. The
-  // platform names are "target OS-target OS version" tuples.
   getPlatforms(plugin) {
+    // Return list of platforms (builds) for given plugin. The
+    // platform names are "target OS-target OS version" tuples.
+      
     if (!this.data) {
       return [];
     }
@@ -99,8 +103,9 @@ class Catalog {
     return Object.keys(this.data[plugin].platforms);
   }
 
-  // Get list of versions available for given plugin and platform.
   getPluginVersions(plugin, platform) {
+    // Get list of versions available for given plugin and platform.
+     
     const platforms = this.getPlatforms(plugin);
     if (platforms.indexOf(platform) === -1 ) {
       return []
@@ -108,8 +113,9 @@ class Catalog {
     return Object.keys(this.data[plugin]["platforms"][platform]);
   }
 
-  // Return download url for given plugin, platform and version.
   getDownloadUrl(plugin, platform, version) {
+    // Return download url for given plugin, platform and version.
+
     const versions = this.getPluginVersions(plugin, platform);
     if (!versions) {
       return undefined;
@@ -141,6 +147,7 @@ class Catalog {
 }
 
 class Copyright extends React.Component {
+  // Display the copyright info at bottom.
 
   constructor(props, context) {
     super(props, context);
@@ -177,6 +184,7 @@ The license is available
 
 
 class CurrCatalogComp extends React.Component {
+  // Current catalog (at top) + optional details.
 
   constructor(props, context) {
     super(props, context);
@@ -218,6 +226,7 @@ class CurrCatalogComp extends React.Component {
 
 
 class CatalogSelect extends React.Component {
+  // The select catalog radio buttons, initially hidden.
 
   constructor(props, context) {
     super(props, context);
@@ -291,6 +300,7 @@ class CatalogSelect extends React.Component {
 
 
 class PluginSelect extends React.Component {
+  // First drop-down: Select plugin from catalog
 
   componentDidMount() {
     this.onChange = this.onChange.bind(this);
@@ -323,6 +333,7 @@ class PluginSelect extends React.Component {
 
 
 class PlatformSelect extends React.Component {
+  // Second drop-down: select platform (build) of selected plugin
 
   constructor(props, context) {
     super(props, context);
@@ -375,6 +386,7 @@ class PlatformSelect extends React.Component {
 
 
 class VersionSelect extends React.Component {
+  // Third drop-down: User selects version of selected build, often just one
 
   constructor(props, context) {
     super(props, context);
@@ -417,6 +429,8 @@ class VersionSelect extends React.Component {
 
 
 function DownloadPlugin(props) {
+  // The Download button.
+  
   if (props.disabled) {
     return (
       <Button variant="secondary" href={props.url} disabled>
