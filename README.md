@@ -12,15 +12,21 @@ back and installs it.  Some background discussion is available in [2]
 ## Installation:
 
    $ git clone https://github.com/leamas/ocpn-download
+   $ cd ocpn-download
    $ npm ci
    $ npm run build
 
 The installation creates a directory build which can be served by a static
 webserver like apache or nginx.
 
-Note that the default build assumes that the package is served at the root
-directory. The build output has more info on this.
+Note that the url the application is served under is hardcoded into the
+homepage stanza in package.json. This needs to be patched in most
+deployment scenarios.
 
+Under apache, a symlink like
+'/var/www/html/opencpn-dl -> /home/al/src/ocpn-download/build' works fine
+to deploy the application under a sub-uri if the package.json
+homepage matches it.
 
 ## License
 Copyright (c) Alec Leamas 2020
