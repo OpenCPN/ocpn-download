@@ -13,6 +13,7 @@ back and installs it.  Some background discussion is available in [2]
 
    $ git clone https://github.com/leamas/ocpn-download
    $ cd ocpn-download
+   $ # Edit package.json, update the homepage stanza.
    $ npm ci
    $ npm run build
 
