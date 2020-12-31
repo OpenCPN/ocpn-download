@@ -530,7 +530,7 @@ class App extends React.Component {
         plugin, this.state.platform, this.state.version);
     }
     return (
-      <div className="app">
+      <div className="app" style={{cursor: this.state.loading ? 'wait' : 'default'}}>
         <div className="container" >
           <header className="app-header">
             <p> OpenCPN Plugin Downloader </p>
