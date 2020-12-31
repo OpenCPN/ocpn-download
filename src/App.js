@@ -274,15 +274,15 @@ class CatalogSelect extends React.Component {
               type="radio" label='Beta' id="Beta"
               onChange={this.handleOptionChange}
               checked={this.props.label === 'Beta'} />
-            <div className="row">
-              <div className="col-sm-4">
+            <div className="col-sm-12">
+              <div className="row">
                 <Form.Check
                   type="radio" label={Custom} id="Custom"
                   onChange={this.handleOptionChange}
                   checked={this.props.label === 'Custom'} />
               </div>
-              <div className="col-sm-8">
-                <Form.Group controlId="custum-url-input">
+              <div className="row">
+                <Form.Group controlId="custom-url-input" className="url-input">
                   <Form.Control
                     ref={input => { this.urlInput = input; }}
                     type="url"
