@@ -211,7 +211,6 @@ class CurrentCatalog extends React.Component {
         </div>
         <div className="details-info"
           style={{display: this.state.details ? 'inline' : 'none'}} >
-          <div> Version: {this.props.version} </div>
           <div> Last update: {this.props.date} </div>
         </div>
         <img src={arrow}
