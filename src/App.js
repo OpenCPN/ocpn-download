@@ -36,10 +36,6 @@ import arrow from './triangle-right.png';
 
 import './App.css';
 
-const API_base= 'https://squidd.io:443/apps/v1/api/ocpn_plugins/catalogs';
-const API_params = 'catalog=@catalog@&plugin=all'
-const API_url = API_base + '?' + API_params;
-
 const urlBase = "https://raw.githubusercontent.com/OpenCPN/plugins";
 
 const urlByName = {
@@ -48,83 +44,74 @@ const urlByName = {
   "Custom": ""
 }
 
+class Plugin {
+
+  constructor(elem) {
+    this.name = this.getElementByName(elem, 'name');
+    this.version = this.getElementByName(elem, 'version');
+    this.target = this.getElementByName(elem, 'target')
+      + '-' + this.getElementByName(elem, 'target-version');
+    this.tarball_url = this.getElementByName(elem, 'tarball-url');
+  }
+
+  getElementByName(e, name) {
+    return e.getElementsByTagName(name)[0].textContent.trim();
+  }
+
+
+}
+
 class Catalog {
   // The plugin database, reflecting the parsed ocpn-plugins.xml
 
   constructor() {
-    this.parse = this.parse.bind(this);
+    this.getPlugins = this.getPlugins.bind(this);
+    this.plugins = [];
   }
 
-  parse(label, url, onLoaded, onError){
-    const api = API_url.replace('@catalog@', encodeURIComponent(url));
-    fetch(api)
-      .then(res => res.json())
-      .then(res => {
-        this.state = {'ok':true, 'label': label};
-        this.data  = JSON.parse(JSON.stringify(res));
-        if ('errors' in this.data) {
-          console.log('Error fetching catalog: ' + this.data['errors']);
-          onError(label, url, this.data['errors']);
-        }
-        else {
-          onLoaded(label, this.getPlugins());
-        }
-      })
-      .catch((error) => {
-          console.log("Cannot dowload catalog " + label + " from " + url);
-          onError(label, url, String(error));
-      })
+  init(responseXML) {
+    const elements = Array.from(responseXML.getElementsByTagName('plugin'));
+    this.plugins = elements.map(e => new Plugin(e));
+
+    const p = responseXML.getElementsByTagName('plugins')[0];
+    this.date = p.getElementsByTagName('date')[0].textContent.trim();
+
+    var versions = Array.from( p.getElementsByTagName('version'));
+    versions = versions.filter(v => v.parentNode === p);
+    this.version = versions[0].textContent.trim();
   }
 
   getPlugins() {
     // Return list of available plugins
-     
-    if (!this.data) {
-      return [];
-    }
-    const keys = Object.keys(this.data);
-    const ix = keys.indexOf('attribs');
-    if (ix !== -1) {
-      keys.splice(ix, 1);
-    }
-    return keys;
+    return this.plugins.map(p => p.name);
   }
+
 
   getPlatforms(plugin) {
     // Return list of platforms (builds) for given plugin. The
     // platform names are "target OS-target OS version" tuples.
-      
-    if (!this.data) {
-      return [];
-    }
-    if (Object.keys(this.data).indexOf(plugin) === -1 ) {
-      return [];
-    }
-    return Object.keys(this.data[plugin].platforms);
+
+    const targets = this.plugins.filter(p  => p.name === plugin);
+    return targets.map(p => p.target);
   }
+
 
   getPluginVersions(plugin, platform) {
     // Get list of versions available for given plugin and platform.
-     
-    const platforms = this.getPlatforms(plugin);
-    if (platforms.indexOf(platform) === -1 ) {
-      return []
-    }
-    return Object.keys(this.data[plugin]["platforms"][platform]);
+
+    const versions = this.plugins.filter(
+      p => p.name === plugin && p.target === platform
+    );
+    return versions.map(p => p.version);
   }
 
-  getDownloadUrl(plugin, platform, version) {
+  getDownloadUrl(plugin, platform, vers) {
     // Return download url for given plugin, platform and version.
 
-    const versions = this.getPluginVersions(plugin, platform);
-    if (!versions) {
-      return undefined;
-    }
-    if (versions.indexOf(version) === -1) {
-      return undefined;
-    }
-
-    return this.data[plugin]["platforms"][platform][version]["tarball_url"];
+    const match = this.plugins.filter(
+      p => p.name === plugin && p.target === platform && p.version === vers
+    );
+    return match.length === 1 ? match[0].tarball_url : "";
   }
 
   getAttribute(attr) {
@@ -140,9 +127,9 @@ class Catalog {
     return this.data['attribs'][attr];
   }
 
-  getVersion() { return this.getAttribute('version') }
+  getVersion() { return this.version }
 
-  getDate() { return this.getAttribute('date') }
+  getDate() { return this.date }
 
 }
 
@@ -162,7 +149,7 @@ class Copyright extends React.Component {
           alt={this.state.expanded ? 'collapse' : 'expand'}
           onClick={(e) => {this.setState({expanded: !this.state.expanded})}}
         />
-        &nbsp;    
+        &nbsp;
         Copyright and license
         <div style={{display: this.state.expanded ? 'block' : 'none'}}
           className="license">
@@ -173,7 +160,7 @@ it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 3 of the License, or
 (at your option) any later version
 <br/>
-The license is available 
+The license is available
 <a href="https://github.com/leamas/ocpn-download/blob/master/COPYING"> here </a>
 
         </div>
@@ -239,7 +226,6 @@ class CatalogSelect extends React.Component {
   showSelectedCatalog(bool) { this.setState({showCatalogs: bool}); }
 
   handleOptionChange = changeEvent => {
-
     const option_msg =
       "Custom URL catalogs are not tested and carries a high risk\n" +
       "for bugs or even events destructive for your system.";
@@ -389,7 +375,7 @@ class VersionSelect extends React.Component {
 
   constructor(props, context) {
     super(props, context);
-    this.versions =  props.versions ? props.versions : [];
+    this.versions = props.versions ? props.versions : [];
     this.onChange = this.onChange.bind(this);
     this.platformChangeCount = 0;
   }
@@ -430,7 +416,7 @@ class VersionSelect extends React.Component {
 
 function DownloadPlugin(props) {
   // The Download button.
-  
+
   if (props.disabled) {
     return (
       <Button variant="secondary" href={props.url} disabled>
@@ -462,8 +448,8 @@ class App extends React.Component {
       'loading': true,
       'platformChangeCount': 1
     }
-    this.onLoaded = this.onLoaded.bind(this);
-    this.loadError = this.loadError.bind(this);
+    this.parse = this.parse.bind(this);
+    this.loadCatalog = this.loadCatalog.bind(this);
   }
 
   componentDidMount() {
@@ -471,26 +457,38 @@ class App extends React.Component {
   }
 
   loadCatalog(label) {
-    const catalog = new Catalog();
     this.setState({
-      'catalog': catalog,
       'catalogLabel': 'Loading...',
       'loading': true
     });
-    catalog.parse(label, urlByName[label], this.onLoaded, this.loadError);
+    this.parse(label, urlByName[label]);
   }
 
-  onLoaded(label, plugins) {
-    this.setState({
-      'catalogLabel': label,
-      'plugins': plugins,
-      'loading': false
-    });
-  }
-
-  loadError(label, url) {
-    console.log('Cannot load catalog ' + label + ' from ' + url);
-    this.setState({ 'catalogLabel': 'Cannot load catalog ' + label});
+  parse(label, url){
+    var xhttp = new XMLHttpRequest();
+    xhttp.open("GET", url);
+    xhttp.send();
+    xhttp.onreadystatechange = function() {
+      if (xhttp.readyState === 4) {
+        if (xhttp.status === 200) {
+          var parser = new DOMParser();
+          this.state.catalog.init(
+            parser.parseFromString(xhttp.responseText, "text/xml")
+          );
+          this.setState({
+            'ok': true,
+            'catalogLabel': label,
+            'plugins': this.state.catalog.getPlugins(),
+            'loading': false
+          });
+        }
+        else {
+          console.log("Cannot download catalog " + label + " from " + url
+                      + ", status: " + xhttp.statusText);
+          this.setState({'catalogLabel': 'Cannot load catalog ' + label});
+        }
+      }
+    }.bind(this);
   }
 
   setPlugin(plugin) {
