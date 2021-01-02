@@ -22,15 +22,14 @@
 /*
  * Web support for downloading OpenCPN plugins.
  *
- * A single-page application which uses a backend API to parse the plugin
- * catalog. User can select plugin, platform and version and eventually
- * download the plugin.
+ * A single-page application which downloads and parses a catalog. User
+ * can select plugin, platform and version and eventually download the plugin.
  *
  * Some background: https://github.com/OpenCPN/OpenCPN/issues/1839
  */
 
 import React from 'react';
-import { Card, Button, Form} from 'react-bootstrap';
+import {Card, Button, Form} from 'react-bootstrap';
 
 import arrow from './triangle-right.png';
 
@@ -43,6 +42,7 @@ const urlByName = {
   "Beta": urlBase + "/Beta/ocpn-plugins.xml",
   "Custom": ""
 }
+
 
 class Plugin {
 
@@ -57,9 +57,8 @@ class Plugin {
   getElementByName(e, name) {
     return e.getElementsByTagName(name)[0].textContent.trim();
   }
-
-
 }
+
 
 class Catalog {
   // The plugin database, reflecting the parsed ocpn-plugins.xml
@@ -85,7 +84,6 @@ class Catalog {
     // Return list of available plugins
     return this.plugins.map(p => p.name);
   }
-
 
   getPlatforms(plugin) {
     // Return list of platforms (builds) for given plugin. The
@@ -114,8 +112,8 @@ class Catalog {
   getVersion() { return this.version }
 
   getDate() { return this.date }
-
 }
+
 
 class Copyright extends React.Component {
   // Display the copyright info at bottom.
@@ -144,7 +142,6 @@ the terms of the GNU General Public License as published by the Free Software
 Foundation; either version 3 of the License or, at your option, any later
 version. Sources and license are available
 <a href="https://github.com/leamas/ocpn-download"> here </a>
-
         </div>
       </div>
     );
