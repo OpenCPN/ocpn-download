@@ -91,18 +91,15 @@ class Catalog {
     // Return list of platforms (builds) for given plugin. The
     // platform names are "target OS-target OS version" tuples.
 
-    const targets = this.plugins.filter(p  => p.name === plugin);
-    return targets.map(p => p.target);
+    return this.plugins.filter(p  => p.name === plugin).map(p => p.target);
   }
-
 
   getPluginVersions(plugin, platform) {
     // Get list of versions available for given plugin and platform.
 
-    const versions = this.plugins.filter(
-      p => p.name === plugin && p.target === platform
-    );
-    return versions.map(p => p.version);
+    return this.plugins
+      .filter(p => p.name === plugin && p.target === platform)
+      .map(p => p.version);
   }
 
   getDownloadUrl(plugin, platform, vers) {
@@ -112,19 +109,6 @@ class Catalog {
       p => p.name === plugin && p.target === platform && p.version === vers
     );
     return match.length === 1 ? match[0].tarball_url : "";
-  }
-
-  getAttribute(attr) {
-    if (!this.data) {
-      return ""
-    }
-    if (Object.keys(this.data).indexOf('attribs') === -1) {
-      return "?";
-    }
-    if (Object.keys(this.data['attribs']).indexOf(attr) === -1) {
-      return "??"
-    }
-    return this.data['attribs'][attr];
   }
 
   getVersion() { return this.version }
@@ -155,13 +139,13 @@ class Copyright extends React.Component {
           className="license">
 Copyright {'\u00a9'} Alec Leamas 2020
 <br/>
-This program is free software; you can redistribute it and/or modify
+This program is free software. You can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 3 of the License, or
-(at your option) any later version
+(at your option), any later version
 <br/>
-The license is available
-<a href="https://github.com/leamas/ocpn-download/blob/master/COPYING"> here </a>
+Sources and license is available
+<a href="https://github.com/leamas/ocpn-download"> here </a>
 
         </div>
       </div>
@@ -476,7 +460,6 @@ class App extends React.Component {
             parser.parseFromString(xhttp.responseText, "text/xml")
           );
           this.setState({
-            'ok': true,
             'catalogLabel': label,
             'plugins': this.state.catalog.getPlugins(),
             'loading': false
