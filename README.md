@@ -29,6 +29,11 @@ Under apache, a symlink like
 to deploy the application under a sub-uri if the package.json
 homepage matches it.
 
+## Technical
+
+The application is a single-page javascript webpage built using React and
+Node.js
+
 ## License
 Copyright (c) Alec Leamas 2020
 This program is free software; you can redistribute it and/or modify
