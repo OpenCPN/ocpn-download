@@ -139,10 +139,9 @@ class Copyright extends React.Component {
           className="license">
 Copyright {'\u00a9'} Alec Leamas 2020
 <br/>
-This program is free software. You can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 3 of the License, or
-(at your option), any later version
+This program is free software. You can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation; either version 3 of the License, or (at your option),any later version
 <br/>
 Sources and license is available
 <a href="https://github.com/leamas/ocpn-download"> here </a>
@@ -312,7 +311,6 @@ class PlatformSelect extends React.Component {
     }
     this.onChange = this.onChange.bind(this);
   }
-
 
   onChange(event) {
     this.props.setPlatform(event.target.value);
