@@ -69,15 +69,41 @@ class Catalog {
   }
 
   init(responseXML) {
-    const elements = Array.from(responseXML.getElementsByTagName('plugin'));
-    this.plugins = elements.map(e => new Plugin(e));
+    this.plugins = Array
+      .from(responseXML.getElementsByTagName('plugin'))
+      .map(e => new Plugin(e));
 
     const p = responseXML.getElementsByTagName('plugins')[0];
     this.date = p.getElementsByTagName('date')[0].textContent.trim();
 
-    var versions = Array.from( p.getElementsByTagName('version'));
-    versions = versions.filter(v => v.parentNode === p);
-    this.version = versions[0].textContent.trim();
+    const versions = Array
+      .from(p.getElementsByTagName('version'))
+      .filter(v => v.parentNode === p);   // Top-level catalog <version> node
+    this.version =
+      versions.length === 1 ? versions[0].textContent.trim() : "??";
+  }
+
+  load(label, url, onDone){
+    var xhttp = new XMLHttpRequest();
+    xhttp.open("GET", url);
+    xhttp.send();
+    xhttp.onreadystatechange = function() {
+      if (xhttp.readyState === 4) {
+        if (xhttp.status === 200) {
+          this.init(
+            new DOMParser().parseFromString(xhttp.responseText, "text/xml")
+          );
+          onDone(label);
+        }
+        else {
+          console.log("Cannot download catalog " + label + " from " + url
+                      + ", status: " + xhttp.statusText);
+          const errorText =
+            xhttp.statusText ? "Error " + xhttp.statusText : "Unknown error"
+          onDone(label, errorText + " on " + url);
+        }
+      }
+    }.bind(this);
   }
 
   getPlugins() {
@@ -89,12 +115,14 @@ class Catalog {
     // Return list of platforms (builds) for given plugin. The
     // platform names are "target OS-target OS version" tuples.
 
-    return this.plugins.filter(p  => p.name === plugin).map(p => p.target);
+    return this.plugins.filter(p => p.name === plugin).map(p => p.target);
   }
 
   getPluginVersions(plugin, platform) {
     // Get list of versions available for given plugin and platform.
 
+    if (!platform)
+      return [];
     return this.plugins
       .filter(p => p.name === plugin && p.target === platform)
       .map(p => p.version);
@@ -162,6 +190,17 @@ class CurrentCatalog extends React.Component {
   onCollapse(event) {this.props.showSelectedCatalog(false)}
   onExpand(event) {this.props.showSelectedCatalog(true)}
 
+  details() {
+    if (this.props.errorMessage) {
+      return (
+        <div> {this.props.errorMessage} </div>
+      );
+    }
+    return (
+        <div> Last update: {this.props.date} </div>
+    );
+  }
+
   render() {
     const showCatalogs = this.props.showCatalogs;
     return (
@@ -177,7 +216,7 @@ class CurrentCatalog extends React.Component {
         </div>
         <div className="details-info"
           style={{display: this.state.details ? 'inline' : 'none'}} >
-          <div> Last update: {this.props.date} </div>
+          {this.details()}
         </div>
         <img src={arrow}
           className={showCatalogs ? 'arrow-down' : 'arrow-right'}
@@ -226,6 +265,7 @@ class CatalogSelect extends React.Component {
           showCatalogs={this.state.showCatalogs}
           selectedCatalog={this.props.label}
           showSelectedCatalog={(b) => this.showSelectedCatalog(b)}
+          errorMessage={this.props.errorMessage}
         />
         <div className="catalog-select"
           style={{display: this.state.showCatalogs ? 'block': 'none'}}>
@@ -426,7 +466,7 @@ class App extends React.Component {
       'loading': true,
       'platformChangeCount': 1
     }
-    this.parse = this.parse.bind(this);
+    this.onLoadDone = this.onLoadDone.bind(this);
     this.loadCatalog = this.loadCatalog.bind(this);
   }
 
@@ -439,33 +479,25 @@ class App extends React.Component {
       'catalogLabel': 'Loading...',
       'loading': true
     });
-    this.parse(label, urlByName[label]);
+    this.state.catalog.load(label, urlByName[label], this.onLoadDone);
   }
-
-  parse(label, url){
-    var xhttp = new XMLHttpRequest();
-    xhttp.open("GET", url);
-    xhttp.send();
-    xhttp.onreadystatechange = function() {
-      if (xhttp.readyState === 4) {
-        if (xhttp.status === 200) {
-          var parser = new DOMParser();
-          this.state.catalog.init(
-            parser.parseFromString(xhttp.responseText, "text/xml")
-          );
-          this.setState({
-            'catalogLabel': label,
-            'plugins': this.state.catalog.getPlugins(),
-            'loading': false
-          });
-        }
-        else {
-          console.log("Cannot download catalog " + label + " from " + url
-                      + ", status: " + xhttp.statusText);
-          this.setState({'catalogLabel': 'Cannot load catalog ' + label});
-        }
-      }
-    }.bind(this);
+ 
+  onLoadDone(label, errorMessage) {
+    if (errorMessage) {
+      this.setState({
+        'catalogLabel': 'Cannot load catalog ' + label,
+        'catalogLoadError': errorMessage,
+        'loading': false,
+      });
+    }
+    else {
+      this.setState({
+        'catalogLabel': label,
+        'plugins': this.state.catalog.getPlugins(),
+        'catalogLoadError': '',
+        'loading': false
+      });
+    }
   }
 
   setPlugin(plugin) {
@@ -491,19 +523,12 @@ class App extends React.Component {
   }
 
   render() {
-    const plugin = this.state.plugin;
-    const platforms =
-      plugin !== '' ? this.state.catalog.getPlatforms(plugin) : [];
-    var versions = []
-    if (this.state.platform) {
-      versions =
-        this.state.catalog.getPluginVersions(plugin, this.state.platform)
-    }
-    var url = '';
-    if (this.state.version) {
-      url = this.state.catalog.getDownloadUrl(
-        plugin, this.state.platform, this.state.version);
-    }
+    const state = this.state;
+    const plugin = state.plugin;
+    const platforms = plugin ? state.catalog.getPlatforms(plugin) : [];
+    const versions = state.catalog.getPluginVersions(plugin, state.platform)
+    const url =
+      state.catalog.getDownloadUrl(plugin, state.platform, state.version);
     return (
       <div className="app" style={{cursor: this.state.loading ? 'wait' : 'default'}}>
         <div className="container" >
@@ -515,15 +540,12 @@ class App extends React.Component {
               <CatalogSelect
                 onCatalogChange={(label) => {this.loadCatalog(label)}}
                 label={this.state.catalogLabel}
-                version={this.state.catalog.getVersion()}
                 date={this.state.catalog.getDate()}
+                errorMessage={this.state.catalogLoadError}
               />
             </Card.Body>
           </Card>
-          <div style={{  // disable all plugin selecting until catalog loaded
-            pointerEvents: this.state.loading ? 'none': 'auto',
-            opacity: this.state.loading ? 0.4 : 1.0
-            }} >
+          <div className={this.state.loading ? "while-loading" : "is-loaded"}>
             <Card>
               <Card.Body>
                 <PluginSelect

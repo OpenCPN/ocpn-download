@@ -16,6 +16,16 @@
   height: 100vh;
 }
 
+.while-loading {
+  pointerEvents: none;
+  opacity: 0.4;
+}
+
+.is-loaded {
+  pointerEvents: auto;
+  opacity: 1.0;
+}
+
 .arrow-down {
   height: 0.8em;
   transform: rotate(90deg);
