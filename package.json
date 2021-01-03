@@ -1,6 +1,5 @@
 {
   "name": "ocpn-download",
-"homepage": "orvar",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
