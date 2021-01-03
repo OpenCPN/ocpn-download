@@ -8,4 +8,4 @@ fi
 
 sed -ie '/homepage.*:/d' package.json
 sed -ie '/"version":/i   \"homepage\": \"@homepage@\",' package.json
-sed -ie "s/@homepage@/$HOMEPAGE/"  package.json
+sed -ie "s|@homepage@|$HOMEPAGE|"  package.json
