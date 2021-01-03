@@ -1,0 +1,11 @@
+#!/bin/bash
+
+HOMEPAGE=$1
+if [ -z "$HOMEPAGE" ]; then
+    echo "Usage: set_homepage <homepage url>" >&2
+    exit 2
+fi
+
+sed -ie '/homepage.*:/d' package.json
+sed -ie '/"version":/i   \"homepage\": \"@homepage@\",' package.json
+sed -ie "s/@homepage@/$HOMEPAGE/"  package.json

@@ -11,23 +11,34 @@ back and installs it.  Some background discussion is available in [2]
 
 ## Installation:
 
-   $ git clone https://github.com/leamas/ocpn-download
-   $ cd ocpn-download
-   $ # Edit package.json, update the homepage stanza.
-   $ npm ci
-   $ npm run build
+    $ git clone https://github.com/leamas/ocpn-download
+    $ cd ocpn-download
+    $ npm ci
 
-The installation creates a directory build which can be served by a static
-webserver like apache or nginx.
+Installation requires a reasonably updated npm available, tested with
+6.14.8
 
-Note that the url the application is served under is hardcoded into the
-homepage stanza in package.json. This needs to be patched in most
-deployment scenarios.
+## Testing
+
+    $ npm run start
+
+Starts the test server on the local machine which could be accessed in a
+browser on http://localhost:3000
+
+## Installation
+
+    $ set_homepage http://url.to.application/when/deployed
+    $ npm run build
+
+The installation creates a directory build/ which can be served by a static
+webserver like apache or nginx. This will serve the application on a
+specific url which must be known in advance and fed into *set_homepage*.
 
 Under apache, a symlink like
 '/var/www/html/opencpn-dl -> /home/al/src/ocpn-download/build' works fine
-to deploy the application under a sub-uri if the package.json
-homepage matches it.
+to deploy the application under a sub-uri if the `set_homepage` url
+homepage matches it (and permissions are setup to allow web server access
+to target directory).
 
 ## Technical
 
