@@ -1,12 +1,13 @@
 OpenCPN plugin downloader README
 ================================
 
-This is a javascript frontend which enables OpenCPN[1] users to download
-plugins.
+A javascript frontend enabling OpenCPN [[1]]( https://opencpn.org) users
+to download plugins.
 
 The primary usecase is a user in a harbour without network access which
 takes a laptop to a café in the vicinity, downloads the plugin, carries it
-back and installs it.  Some background discussion is available in [2]
+back and installs it. Some background discussion is available in 
+[[2]](https://github.com/OpenCPN/OpenCPN/issues/1839)
 
 
 ## Installation:
@@ -18,6 +19,7 @@ back and installs it.  Some background discussion is available in [2]
 Installation requires a reasonably updated npm available, tested with
 6.14.8
 
+
 ## Testing
 
     $ npm run start
@@ -25,25 +27,53 @@ Installation requires a reasonably updated npm available, tested with
 Starts the test server on the local machine which could be accessed in a
 browser on http://localhost:3000
 
-## Installation
 
-    $ set_homepage http://url.to.application/when/deployed
+## Build deployment dir.
+
+The application must know the sub-uri it is deployed on, for example
+*/opencpn-dl* when deployed on *http://mumin.crabdance.com/opencpn-dl*.
+This is set using the `set_homepage` script:
+
+    $ ./set_homepage  /opencpn-dl     # or whatever sub-uri used.
+
+Then run
+
     $ npm run build
 
-The installation creates a directory build/ which can be served by a static
-webserver like apache or nginx. This will serve the application on a
-specific url which must be known in advance and fed into *set_homepage*.
+The build creates a directory `build/` which can be served by a static
+webserver like apache or nginx. 
 
-Under apache, a symlink like
-'/var/www/html/opencpn-dl -> /home/al/src/ocpn-download/build' works fine
-to deploy the application under a sub-uri if the `set_homepage` url
-homepage matches it (and permissions are setup to allow web server access
-to target directory).
+
+## Updating the deployed version.
+
+To avoid glitches when updating and to handle permissions a symlink scheme
+is used.
+
+    /var/www/html/opencpn-dl -> /var/www/ocpn-download/current-deploy
+    current-deploy -> deploy
+  
+`/var/www/ocpn-download` is the git clone. The `/var/www/html/opencpn-dl`
+link is owned by the web server and never changed. The `current-deploy`
+link lives in `/var/www/ocpn-download` with regular permissions. The
+`deploy/` directory is a verbatim copy of the `build/` dir.
+
+After creating a new version in `build/` the following can be used to make an
+safe update:
+
+    $ cd /var/www/ocpn-download
+    $ ln -s build tmp
+    $ mv -fT tmp current-deploy
+    $ rm -rf deploy
+    $ cp -ar build deploy
+    $ ln -s deploy tmp
+    $ mv -fT tmp current-deploy
+
 
 ## Technical
 
 The application is a single-page javascript webpage built using React and
 Node.js
+
 
 ## License
 Copyright (c) Alec Leamas 2020
@@ -55,4 +85,5 @@ the Free Software Foundation; either version 3 of the License, or
 See COPYING for exact terms and conditions.
 
 [1] https://opencpn.org
+
 [2] https://github.com/OpenCPN/OpenCPN/issues/1839
