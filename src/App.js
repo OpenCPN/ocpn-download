@@ -29,11 +29,18 @@
  */
 
 import React from 'react';
+import {StrictMode} from 'react';
+import {createRoot} from 'react-dom/client';
 import {Card, Button, Form} from 'react-bootstrap';
 
 import arrow from './triangle-right.png';
 
 import './App.css';
+
+const rootElement = document.getElementById('root');
+
+// if you use TypeScript, add non-null (!) assertion operator
+const root = createRoot(rootElement);
 
 const urlBase = "https://raw.githubusercontent.com/OpenCPN/plugins";
 
@@ -577,5 +584,11 @@ class App extends React.Component {
     );
   }
 }
+
+root.render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+);
 
 export default App;
