@@ -37,6 +37,13 @@ import arrow from './triangle-right.png';
 
 import './App.css';
 
+function uniq(plugins) {
+    var seen = {};
+    return plugins.filter(function(plugin) {
+        return seen.hasOwnProperty(plugin) ? false : (seen[plugin] = true);
+    });
+}
+
 const rootElement = document.getElementById('root');
 
 // if you use TypeScript, add non-null (!) assertion operator
@@ -557,7 +564,7 @@ class App extends React.Component {
               <Card.Body>
                 <PluginSelect
                   plugin={this.state.plugin}
-                  plugins={this.state.plugins}
+                  plugins={uniq(this.state.plugins)}
                   setPlugin={(plugin) => {this.setPlugin(plugin)}}
                 />
                 <PlatformSelect
